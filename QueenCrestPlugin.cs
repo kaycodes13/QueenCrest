@@ -74,6 +74,8 @@ public partial class QueenCrestPlugin : BaseUnityPlugin {
 		#endregion
 
 		Harmony.PatchAll(typeof(Moveset));
+
+		YenCrest.BindCompleteEvent = Bind.EnableReaperBindEffect;
 		Harmony.PatchAll(typeof(Bind));
 	}
 

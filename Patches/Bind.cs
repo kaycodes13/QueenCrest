@@ -82,17 +82,17 @@ internal class Bind {
 	/// Initializes the Reaper bind state, which is referenced in many places to enable
 	/// its functionality and visuals. Also enables the visual effect around the player.
 	/// </summary>
-	[HarmonyPatch(typeof(HeroController), nameof(HeroController.BindCompleted))]
-	[HarmonyPostfix]
-	private static void ReaperBindEffect(HeroController __instance) {
+	internal static void EnableReaperBindEffect() {
 		if (!YenCrest.IsEquipped)
 			return;
 
-		__instance.reaperState.IsInReaperMode = true;
-		__instance.reaperState.ReaperModeDurationLeft = Gameplay.ReaperModeDuration;
-		if (__instance.reaperModeEffect) {
-			__instance.reaperModeEffect.gameObject.SetActive(false);
-			__instance.reaperModeEffect.gameObject.SetActive(true);
+		var hc = HeroController.instance;
+
+		hc.reaperState.IsInReaperMode = true;
+		hc.reaperState.ReaperModeDurationLeft = Gameplay.ReaperModeDuration;
+		if (hc.reaperModeEffect) {
+			hc.reaperModeEffect.gameObject.SetActive(false);
+			hc.reaperModeEffect.gameObject.SetActive(true);
 		}
 	}
 
