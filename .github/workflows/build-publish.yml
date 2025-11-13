@@ -12,11 +12,6 @@ on:
         required: true
         default: false
         type: boolean
-      force_nuget:
-        description: Force re-publishing to NuGet
-        required: true
-        default: false
-        type: boolean
     
 permissions:
   contents: write
@@ -41,8 +36,6 @@ jobs:
         dotnet-version: 9.x
     - name: Build
       run: dotnet build -c Release --verbosity normal
-    - name: Pack
-      run: dotnet pack -o nuget/
     - name: Get Version
       id: version
       run: |-
@@ -54,11 +47,6 @@ jobs:
       with:
         name: mod-bundle
         path: thunderstore/dist
-    - name: Upload nuget artifact
-      uses: actions/upload-artifact@v5
-      with:
-        name: nuget
-        path: nuget/
     - name: Check if release needed
       id: needs-release
       uses: mukunku/tag-exists-action@v1.6.0
@@ -72,7 +60,6 @@ jobs:
       with:
         subject-path: |
           thunderstore/dist/*.zip
-          nuget/*.nupkg
 
   # Publish to Thunderstore to that users can install it
   release-thunderstore:
