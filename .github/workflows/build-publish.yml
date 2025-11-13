@@ -115,43 +115,6 @@ jobs:
           --file thunderstore/dist/*.zip \
           --token $THUNDERSTORE_API_KEY
 
-  # Publish to NuGet so that other mods can depend on it in CI
-  release-nuget:
-    needs:
-      - build
-    runs-on: ubuntu-latest
-    if: |
-      (
-        github.event_name == 'push' && 
-        needs.build.outputs.allow-release == 'true' && 
-        needs.build.outputs.is-new-version == 'true'
-      ) ||
-      (
-        github.event_name == 'workflow_dispatch' &&
-        github.event.inputs.force_nuget == 'true'
-      )
-    # Do not substitute your NuGet API key in this workflow! Instead, add a secret to your repository
-    # https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets
-    env:
-      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-
-    steps:
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 9.x
-    - name: Download artifact
-      uses: actions/download-artifact@v6
-      with:
-        name: nuget
-        path: nuget/
-    - name: Publish to NuGet
-      if: env.NUGET_API_KEY != ''
-      run: |-
-        dotnet nuget push nuget/*.nupkg \
-          --api-key $NUGET_API_KEY \
-          --source https://api.nuget.org/v3/index.json
-
   # Publish to GitHub releases to keep release history on the repository (needed for this workflow to work properly
   # but is also nice for multiple other reasons such as auto-tagging *after* a build success)
   release-github:
