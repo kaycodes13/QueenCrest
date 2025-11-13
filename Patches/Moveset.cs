@@ -10,22 +10,19 @@ namespace QueenCrest.Patches;
 
 internal class Moveset {
 
-	private static GameObject? AttackTemplates;
-
 	[HarmonyPatch(typeof(HeroController), nameof(HeroController.Awake))]
 	[HarmonyPostfix]
-	private static void Setup(HeroController __instance) {
-		if (!YenCrest.AttackConfig || !AttackTemplates) {
+	private static void AddMovesetToHornet(HeroController __instance) {
+		if (YenCrest.AttackConfig == null) {
 			HeroControllerConfig config = BuildConfig(__instance);
 			config.heroAnimOverrideLib = BuildAnimations(__instance);
 
 			YenCrest.AttackConfig = config;
-			YenCrest.ToolCrest.heroConfig = config;
-
-			AttackTemplates = BuildAttacks(__instance, config);
+			if (YenCrest.ToolCrest)
+				YenCrest.ToolCrest.heroConfig = config;
 		}
 
-		GameObject root = UObj.Instantiate(AttackTemplates, __instance.transform.Find("Attacks"));
+		GameObject root = BuildAttacks(__instance, YenCrest.AttackConfig);
 
 		ConfigGroup yenCG = new() {
 			ActiveRoot = root,
@@ -51,7 +48,6 @@ internal class Moveset {
 			witch = hc.configs.First(c => c.Config.name == "Whip").Config;
 
 		config.name = YenId;
-		config.heroAnimOverrideLib = animLib;
 		config.chargeSlashChain = witch.ChargeSlashChain;
 		config.chargeSlashRecoils = witch.ChargeSlashRecoils;
 		config.chargeSlashLungeSpeed = witch.ChargeSlashLungeSpeed;
@@ -79,8 +75,6 @@ internal class Moveset {
 
 		GameObject attacks = UObj.Instantiate(hunter.gameObject, hunter.parent);
 		attacks.name = $"{YenId}_Attacks";
-		attacks.transform.SetParent(null);
-		UObj.DontDestroyOnLoad(attacks);
 
 		var strike = UObj.Instantiate(witchStrike.gameObject, witchStrike.transform.parent);
 		strike.name = "ChargeSlash";
@@ -89,7 +83,8 @@ internal class Moveset {
 			animator.Library = config.heroAnimOverrideLib;
 
 		var tinter = attacks.AddComponent<TintRendererGroupConditionally>();
-		tinter.Condition = () => HeroController.instance.NailImbuement.CurrentElement == NailElements.None;
+		tinter.Condition = () =>
+			HeroController.instance.NailImbuement.CurrentElement == NailElements.None;
 		tinter.Color = AttackColor;
 
 		return attacks;

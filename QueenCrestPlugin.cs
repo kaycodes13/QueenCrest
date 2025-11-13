@@ -3,12 +3,9 @@ using BepInEx.Logging;
 using HarmonyLib;
 using Needleforge;
 using Needleforge.Data;
-using QueenCrest.Components;
 using QueenCrest.Patches;
-using System.Collections;
 using TeamCherry.Localization;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using static QueenCrest.Utils.ResourceUtils;
 
 namespace QueenCrest;
@@ -23,7 +20,7 @@ TODO:
 [BepInDependency("org.silksong-modding.i18n")]
 [BepInDependency(NeedleforgePlugin.Id, "0.6.1")]
 public partial class QueenCrestPlugin : BaseUnityPlugin {
-	
+
 	private Harmony Harmony { get; } = new(Id);
 	internal static ManualLogSource Log { get; private set; }
 
@@ -39,7 +36,7 @@ public partial class QueenCrestPlugin : BaseUnityPlugin {
 		= new Color32(r: 89, g: 255, b: 152, a: 255);
 	internal static Color AttackColor { get; }
 		= Color.Lerp(Color.white, AdminGreen, 0.3f);
-	
+
 	private void Awake() {
 		Log = Logger;
 		Logger.LogInfo($"Plugin {Name} ({Id}) has loaded!");
