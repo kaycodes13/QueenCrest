@@ -3,9 +3,12 @@ using BepInEx.Logging;
 using HarmonyLib;
 using Needleforge;
 using Needleforge.Data;
+using QueenCrest.Components;
 using QueenCrest.Patches;
+using System.Collections;
 using TeamCherry.Localization;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using static QueenCrest.Utils.ResourceUtils;
 
 namespace QueenCrest;
@@ -54,12 +57,6 @@ public partial class QueenCrestPlugin : BaseUnityPlugin {
 		YenCrest = NeedleforgePlugin.AddCrest($"{YenId}", YenName, YenDesc, linework, silhouette, glow);
 		#endregion
 
-		#region HUD
-
-		YenCrest.HudFrame.Preset = VanillaCrest.HUNTER_V3;
-		YenCrest.HudFrame.Coroutine = Bind.HudCoroutine;
-		#endregion
-
 		#region Tool Slots
 
 		YenCrest.AddSkillSlot(AttackToolBinding.Up,    new(-0.9f,  1.85f + slotOffset), false);
@@ -73,10 +70,16 @@ public partial class QueenCrestPlugin : BaseUnityPlugin {
 		YenCrest.ApplyAutoSlotNavigation(slotDimensions: new(1.25f, 0.75f));
 		#endregion
 
-		Harmony.PatchAll(typeof(Moveset));
+		#region Gameplay
+
+		YenCrest.HudFrame.Preset = VanillaCrest.HUNTER_V3;
+		YenCrest.HudFrame.Coroutine = Bind.HudCoroutine;
 
 		YenCrest.BindCompleteEvent = Bind.EnableReaperBindEffect;
 		Harmony.PatchAll(typeof(Bind));
+
+		Harmony.PatchAll(typeof(Moveset));
+		#endregion
 	}
 
 	private void OnDestroy() => Harmony.UnpatchSelf();
