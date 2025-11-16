@@ -5,7 +5,7 @@ schemaVersion = "0.0.1"
 # The name of the team you are publishing as
 namespace = "kaycodes13"
 # max 250 characters
-description = "A custom crest themed around The White Lady"
+description = "A custom crest themed around The White Lady. Nimble attacks, rapid silk generation, and heavy silk skill usage."
 
 # Replace this with a correct repo URL if the default is not accurate
 websiteUrl = "https://github.com/kaycodes13/QueenCrest"
@@ -28,6 +28,10 @@ outdir = "./dist"
 
 [[build.copy]]
 source = "./temp"
+target = "/"
+
+[[build.copy]]
+source = "../CHANGELOG.md"
 target = "/"
 
 # additional files and directories can be added to the package like this:
