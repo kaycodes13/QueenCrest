@@ -8,7 +8,7 @@ using ProbabilityInt = Probability.ProbabilityInt;
 
 namespace QueenCrest.Patches;
 
-internal class Bind {
+internal static class Bind {
 	/*
 	For the sake of robustness & customizability, I'm choosing to recreate Reaper bind
 	functionality from scratch.
@@ -22,23 +22,23 @@ internal class Bind {
 	/// Because the hunter moveset attacks faster than reaper's, and witch needle art
 	/// multihits, I'm nerfing the orb drop rates for balance.
 	/// </remarks>
-	private static readonly ProbabilityInt[] silkBundleDrops = [
-		new Probability.ProbabilityInt {
+	private static readonly ProbabilityInt[] silkOrbDrops = [
+		new ProbabilityInt {
 			Value = 1,
-			Probability = 0.45f // original: 0.35f
+			Probability = 0.50f // original: 0.35f
 		},
-		new Probability.ProbabilityInt {
+		new ProbabilityInt {
 			Value = 2,
-			Probability = 0.40f // original: 0.5f
+			Probability = 0.35f // original: 0.5f
 		},
-		new Probability.ProbabilityInt {
+		new ProbabilityInt {
 			Value = 3,
 			Probability = 0.15f // original: 0.15f
 		}
 	];
 
 	private static int GetRandomOrbDrops()
-		=> Probability.GetRandomItemByProbability<ProbabilityInt, int>(silkBundleDrops);
+		=> Probability.GetRandomItemByProbability<ProbabilityInt, int>(silkOrbDrops);
 
 	/// <summary>
 	/// Enables the visual effect of the reaper bind on the HUD while the bind effect is active.
@@ -102,7 +102,7 @@ internal class Bind {
 	/// </summary>
 	[HarmonyPatch(typeof(HealthManager), nameof(HealthManager.TakeDamage), [typeof(HitInstance)])]
 	[HarmonyPostfix]
-	private static void ReaperBindOrbs(HealthManager __instance, ref HitInstance hitInstance) {
+	private static void SpawnSilkOrbs(HealthManager __instance, ref HitInstance hitInstance) {
 		if (!YenCrest.IsEquipped)
 			return;
 
