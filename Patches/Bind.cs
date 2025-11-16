@@ -1,5 +1,6 @@
 ﻿using GlobalSettings;
 using HarmonyLib;
+using HutongGames.PlayMaker;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -75,6 +76,15 @@ internal static class Bind {
 
 			wasInReaperMode = hc.reaperState.IsInReaperMode;
 			yield return null;
+		}
+	}
+
+	internal static void EnableMultibinder(FsmInt value, FsmInt amount, FsmFloat time, PlayMakerFSM _) {
+		ToolItem multibinder = ToolItemManager.GetToolByName("Multibind");
+		if (multibinder.IsEquipped) {
+			value.Value = 2;
+			amount.Value = 2;
+			time.Value = 0.8f;
 		}
 	}
 

@@ -72,6 +72,7 @@ public partial class QueenCrestPlugin : BaseUnityPlugin {
 		YenCrest.HudFrame.Preset = VanillaCrest.HUNTER_V3;
 		YenCrest.HudFrame.Coroutine = Bind.HudCoroutine;
 
+		YenCrest.BindEvent = Bind.EnableMultibinder;
 		YenCrest.BindCompleteEvent = Bind.EnableReaperBindEffect;
 		Harmony.PatchAll(typeof(Bind));
 
