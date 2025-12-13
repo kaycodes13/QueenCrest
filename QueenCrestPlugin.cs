@@ -18,7 +18,7 @@ TODO:
 
 [BepInAutoPlugin(id: "io.github.kaycodes13.queencrest")]
 [BepInDependency("org.silksong-modding.i18n")]
-[BepInDependency(NeedleforgePlugin.Id, "0.6.1")]
+[BepInDependency(NeedleforgePlugin.Id)]
 public partial class QueenCrestPlugin : BaseUnityPlugin {
 
 	private Harmony Harmony { get; } = new(Id);
@@ -56,7 +56,7 @@ public partial class QueenCrestPlugin : BaseUnityPlugin {
 
 		#region Tool Slots
 
-		YenCrest.AddSkillSlot(AttackToolBinding.Up,    new(-0.9f,  1.85f + slotOffset), false);
+		YenCrest.AddSkillSlot(AttackToolBinding.Up,	new(-0.9f,  1.85f + slotOffset), false);
 		YenCrest.AddSkillSlot(AttackToolBinding.Down,  new( 0.93f, 1.93f + slotOffset), false);
 		YenCrest.AddRedSlot(AttackToolBinding.Neutral, new( 2.1f,  0.13f + slotOffset), false);
 		YenCrest.AddYellowSlot(new(-2.1f,   0.13f + slotOffset), false);
@@ -76,7 +76,8 @@ public partial class QueenCrestPlugin : BaseUnityPlugin {
 		YenCrest.BindCompleteEvent = Bind.EnableReaperBindEffect;
 		Harmony.PatchAll(typeof(Bind));
 
-		Harmony.PatchAll(typeof(Moveset));
+		YenCrest.Moveset.OnInitialized += Moveset.Setup;
+
 		#endregion
 	}
 

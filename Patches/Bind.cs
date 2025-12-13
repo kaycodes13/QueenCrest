@@ -80,8 +80,7 @@ internal static class Bind {
 	}
 
 	internal static void EnableMultibinder(FsmInt value, FsmInt amount, FsmFloat time, PlayMakerFSM _) {
-		ToolItem multibinder = ToolItemManager.GetToolByName("Multibind");
-		if (multibinder.IsEquipped) {
+		if (Gameplay.MultibindTool.IsEquipped) {
 			value.Value = 2;
 			amount.Value = 2;
 			time.Value = 0.8f;

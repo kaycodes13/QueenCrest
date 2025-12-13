@@ -1,93 +1,91 @@
-﻿using HarmonyLib;
+﻿using Needleforge.Data;
 using QueenCrest.Components;
 using System.Linq;
 using UnityEngine;
 using static QueenCrest.QueenCrestPlugin;
 using ConfigGroup = HeroController.ConfigGroup;
-using UObj = UnityEngine.Object;
 
 namespace QueenCrest.Patches;
 
-internal class Moveset {
+internal static class Moveset {
 
-	[HarmonyPatch(typeof(HeroController), nameof(HeroController.Awake))]
-	[HarmonyPostfix]
-	private static void AddMovesetToHornet(HeroController __instance) {
-		if (YenCrest.AttackConfig == null) {
-			HeroControllerConfig config = BuildConfig(__instance);
-			config.heroAnimOverrideLib = BuildAnimations(__instance);
+	private static GameObject? animLibObj = null;
 
-			YenCrest.AttackConfig = config;
-			if (YenCrest.ToolCrest)
-				YenCrest.ToolCrest.heroConfig = config;
-		}
+	internal static void Setup() {
+		// By default, Needleforge v0.8 copies most of hunter's moveset and config for
+		// crests without custom attacks. So as a hotfix I'm just going to set up
+		// witch charged slash and leave the other defaults in place.
 
-		GameObject root = BuildAttacks(__instance, YenCrest.AttackConfig);
-
-		ConfigGroup yenCG = new() {
-			ActiveRoot = root,
-			Config = YenCrest.AttackConfig,
-
-			NormalSlashObject = root.transform.Find("Slash").gameObject,
-			AlternateSlashObject = root.transform.Find("AltSlash").gameObject,
-			UpSlashObject = root.transform.Find("UpSlash").gameObject,
-			DownSlashObject = root.transform.Find("DownSlash").gameObject,
-			WallSlashObject = root.transform.Find("WallSlash").gameObject,
-			DashStab = root.transform.Find("Dash Stab").gameObject,
-			ChargeSlash = root.transform.Find("ChargeSlash").gameObject,
-		};
-
-		__instance.configs = [.. __instance.configs, yenCG ];
-
-		yenCG.Setup();
+		EditHeroConfig();
+		CreateMissingAttacks();
 	}
 
-	private static HeroControllerConfig BuildConfig(HeroController hc) {
-		HeroControllerConfig
-			config = UObj.Instantiate(hc.configs.First(c => c.Config.name == "Default").Config),
-			witch = hc.configs.First(c => c.Config.name == "Whip").Config;
+	/// <summary>
+	/// Copies charged-slash related configuration from Witch to Queen Crest.
+	/// The rest of Hunter's config is provided by default by Needleforge.
+	/// </summary>
+	private static void EditHeroConfig() {
+		HeroConfigNeedleforge yenConfig = YenCrest.Moveset.HeroConfig!;
+		HeroControllerConfig witchConfig = ToolItemManager.GetCrestByName("Witch").HeroConfig;
 
-		config.name = YenId;
-		config.chargeSlashChain = witch.ChargeSlashChain;
-		config.chargeSlashRecoils = witch.ChargeSlashRecoils;
-		config.chargeSlashLungeSpeed = witch.ChargeSlashLungeSpeed;
-		config.chargeSlashLungeDeceleration = witch.ChargeSlashLungeDeceleration;
-
-		return config;
+		yenConfig.SetChargedSlashFields(
+			chain: witchConfig.chargeSlashChain,
+			lungeSpeed: witchConfig.chargeSlashLungeSpeed,
+			lungeDeceleration: witchConfig.chargeSlashLungeDeceleration,
+			recoils: witchConfig.chargeSlashRecoils
+		);
+		yenConfig.heroAnimOverrideLib = GetOrCreateAnimationLibrary();
 	}
 
-	private static tk2dSpriteAnimation BuildAnimations(HeroController hc) {
-		tk2dSpriteAnimation
-			witch = hc.configs.First(c => c.Config.name == "Whip").Config.heroAnimOverrideLib;
+	/// <summary>
+	/// Creates the alt slash and charged slash for Queen Crest, from Hunter and Witch.
+	/// The rest of the Hunter attack objects are provided by default by Needleforge.
+	/// </summary>
+	private static void CreateMissingAttacks() {
+		HeroController hc = HeroController.instance;
+		HeroConfigNeedleforge yenConfig = YenCrest.Moveset.HeroConfig!;
+		ConfigGroup
+			yenCg = YenCrest.Moveset.ConfigGroup!,
+			witchCg = hc.configs.First(x => x.Config.name == "Whip"),
+			hunterCg = hc.configs.First(x => x.Config.name == "Default");
 
-		var animObj = new GameObject($"{YenId}_AnimLib");
-		var animLib = animObj.AddComponent<tk2dSpriteAnimation>();
-		animLib.clips = [..witch.clips.Where(c => c.name.Contains("Charged"))];
-		UObj.DontDestroyOnLoad(animObj);
+		GameObject queenStrike = Object.Instantiate(witchCg.ChargeSlash, yenCg.ActiveRoot.transform);
+		foreach (var animator in queenStrike.GetComponents<tk2dSpriteAnimator>())
+			animator.Library = GetOrCreateAnimationLibrary();
 
-		return animLib;
-	}
-
-	private static GameObject BuildAttacks(HeroController hc, HeroControllerConfig config) {
-		Transform
-			hunter = hc.transform.Find("Attacks/Default"),
-			witchStrike = hc.transform.Find("Attacks/Charge Slash Witch");
-
-		GameObject attacks = UObj.Instantiate(hunter.gameObject, hunter.parent);
-		attacks.name = $"{YenId}_Attacks";
-
-		var strike = UObj.Instantiate(witchStrike.gameObject, witchStrike.transform.parent);
-		strike.name = "ChargeSlash";
-		strike.transform.SetParent(attacks.transform);
-		foreach (var animator in strike.GetComponents<tk2dSpriteAnimator>())
-			animator.Library = config.heroAnimOverrideLib;
-
-		var tinter = attacks.AddComponent<TintRendererGroupConditionally>();
+		yenCg.ChargeSlash = queenStrike;
+		yenCg.AlternateSlashObject = Object.Instantiate(hunterCg.AlternateSlashObject, yenCg.ActiveRoot.transform);
+		
+		var tinter = yenCg.ActiveRoot.AddComponent<TintRendererGroupConditionally>();
 		tinter.Condition = () =>
 			HeroController.instance.NailImbuement.CurrentElement == NailElements.None;
 		tinter.Color = AttackColor;
+	}
 
-		return attacks;
+	/// <summary>
+	/// Returns an animation library containing only Witch crest's charged slash
+	/// animations, both the Hornet overrides and the effect swooshes.
+	/// If the library hasn't been created yet it will be created by this method.
+	/// </summary>
+	private static tk2dSpriteAnimation GetOrCreateAnimationLibrary() {
+		if (animLibObj)
+			return animLibObj.GetComponent<tk2dSpriteAnimation>();
+
+		HeroController hc = HeroController.instance;
+		tk2dSpriteAnimation
+			witch = hc.configs.First(c => c.Config.name == "Whip").Config.heroAnimOverrideLib;
+
+		animLibObj = new GameObject($"{YenId}_AnimLib") {
+			hideFlags = HideFlags.HideAndDontSave
+		};
+		Object.DontDestroyOnLoad(animLibObj);
+		var animLib = animLibObj.AddComponent<tk2dSpriteAnimation>();
+		animLib.clips = [
+			.. witch.clips.Where(x => x.name.Contains("Charged"))
+		];
+		animLib.isValid = false;
+		animLib.ValidateLookup();
+		return animLib;
 	}
 
 }
