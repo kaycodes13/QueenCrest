@@ -8,7 +8,9 @@ updates:
       - dependency-name: UnityEngine.Modules
     schedule:
       interval: daily
+    target-branch: "develop"
   - directory: /
     package-ecosystem: github-actions
     schedule:
       interval: daily
+    target-branch: "develop"
