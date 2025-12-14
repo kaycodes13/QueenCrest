@@ -1,3 +1,6 @@
+### v0.1.3
+* Update dependency versions.
+
 ### v0.1.2
 * Hotfixes for compatibility with Needleforge v0.8.0
 * Fixed Queen Crest incorrectly counting towards the progression of Eva's questline.
@@ -9,4 +12,5 @@
 
 ### v0.1.0
 * Initial release!
+
 
