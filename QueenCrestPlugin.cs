@@ -18,7 +18,7 @@ TODO:
 
 [BepInAutoPlugin(id: "io.github.kaycodes13.queencrest")]
 [BepInDependency("org.silksong-modding.i18n")]
-[BepInDependency(NeedleforgePlugin.Id)]
+[BepInDependency("io.github.needleforge")]
 public partial class QueenCrestPlugin : BaseUnityPlugin {
 
 	private Harmony Harmony { get; } = new(Id);
