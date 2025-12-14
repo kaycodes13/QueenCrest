@@ -26,16 +26,13 @@ internal static class Bind {
 	private static readonly ProbabilityInt[] silkOrbDrops = [
 		new ProbabilityInt {
 			Value = 1,
-			Probability = 0.50f // original: 0.35f
+			Probability = 0.70f // original: 0.35f
 		},
 		new ProbabilityInt {
 			Value = 2,
-			Probability = 0.35f // original: 0.5f
+			Probability = 0.30f // original: 0.5f
 		},
-		new ProbabilityInt {
-			Value = 3,
-			Probability = 0.15f // original: 0.15f
-		}
+		// original also has 3 orbs at 0.15f
 	];
 
 	private static int GetRandomOrbDrops()

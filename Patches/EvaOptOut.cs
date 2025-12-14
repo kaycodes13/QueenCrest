@@ -5,7 +5,7 @@ using static QueenCrest.QueenCrestPlugin;
 
 namespace QueenCrest.Patches;
 
-internal class EvaOptOut {
+internal static class EvaOptOut {
 
 	[HarmonyPatch(typeof(CountCrestUnlockPoints), nameof(CountCrestUnlockPoints.OnEnter))]
 	[HarmonyPrefix]
