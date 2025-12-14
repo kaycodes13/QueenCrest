@@ -78,6 +78,8 @@ public partial class QueenCrestPlugin : BaseUnityPlugin {
 
 		YenCrest.Moveset.OnInitialized += Moveset.Setup;
 
+		Harmony.PatchAll(typeof(EvaOptOut));
+
 		#endregion
 	}
 
