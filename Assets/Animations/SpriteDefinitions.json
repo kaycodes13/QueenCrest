@@ -1,0 +1,30 @@
+﻿[
+	{
+		"Path": "empty.png",
+		"Pivot": { "x": 0, "y": 0 }
+	},
+	{
+		"Path": "SlashEffect.slash_0.png",
+		"Pivot": { "x": 210, "y": 80 }
+	},
+	{
+		"Path": "SlashEffect.slash_1.png",
+		"Pivot": { "x": 210, "y": 80 }
+	},
+	{
+		"Path": "SlashEffect.slash_2.png",
+		"Pivot": { "x": -10, "y": 10 }
+	},
+	{
+		"Path": "SlashEffectAlt.slashalt_0.png",
+		"Pivot": { "x": 210, "y": 30 }
+	},
+	{
+		"Path": "SlashEffectAlt.slashalt_1.png",
+		"Pivot": { "x": 210, "y": 60 }
+	},
+	{
+		"Path": "SlashEffectAlt.slashalt_2.png",
+		"Pivot": { "x": -10, "y": 60 }
+	}
+]

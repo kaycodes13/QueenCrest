@@ -1,5 +1,7 @@
 ﻿using Needleforge.Data;
 using QueenCrest.Components;
+using QueenCrest.Data;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 using static QueenCrest.QueenCrestPlugin;
@@ -16,6 +18,7 @@ internal static class Moveset {
 		// crests without custom attacks. So as a hotfix I'm just going to set up
 		// witch charged slash and leave the other defaults in place.
 
+		AddHeroOverrideAnims();
 		EditHeroConfig();
 		CreateMissingAttacks();
 	}
@@ -34,7 +37,7 @@ internal static class Moveset {
 			lungeDeceleration: witchConfig.chargeSlashLungeDeceleration,
 			recoils: witchConfig.chargeSlashRecoils
 		);
-		yenConfig.heroAnimOverrideLib = GetOrCreateAnimationLibrary();
+		yenConfig.heroAnimOverrideLib = CustomAnimations.library;
 	}
 
 	/// <summary>
@@ -51,7 +54,7 @@ internal static class Moveset {
 
 		GameObject queenStrike = Object.Instantiate(witchCg.ChargeSlash, yenCg.ActiveRoot.transform);
 		foreach (var animator in queenStrike.GetComponents<tk2dSpriteAnimator>())
-			animator.Library = GetOrCreateAnimationLibrary();
+			animator.Library = CustomAnimations.library;
 
 		yenCg.ChargeSlash = queenStrike;
 		yenCg.AlternateSlashObject = Object.Instantiate(hunterCg.AlternateSlashObject, yenCg.ActiveRoot.transform);
@@ -62,30 +65,27 @@ internal static class Moveset {
 		tinter.Color = AttackColor;
 	}
 
+	private static bool addedHeroAnims = false;
+
 	/// <summary>
-	/// Returns an animation library containing only Witch crest's charged slash
-	/// animations, both the Hornet overrides and the effect swooshes.
-	/// If the library hasn't been created yet it will be created by this method.
+	/// Adds Witch crest's charged slash animations - both the Hornet overrides and the
+	/// effect swooshes - to the animation library used by all attacks, etc.
 	/// </summary>
-	private static tk2dSpriteAnimation GetOrCreateAnimationLibrary() {
-		if (animLibObj)
-			return animLibObj.GetComponent<tk2dSpriteAnimation>();
+	private static void AddHeroOverrideAnims() {
+		if (addedHeroAnims)
+			return;
 
 		HeroController hc = HeroController.instance;
 		tk2dSpriteAnimation
 			witch = hc.configs.First(c => c.Config.name == "Whip").Config.heroAnimOverrideLib;
 
-		animLibObj = new GameObject($"{YenId}_AnimLib") {
-			hideFlags = HideFlags.HideAndDontSave
-		};
-		Object.DontDestroyOnLoad(animLibObj);
-		var animLib = animLibObj.AddComponent<tk2dSpriteAnimation>();
-		animLib.clips = [
+		CustomAnimations.library.clips = [
+			.. CustomAnimations.library.clips,
 			.. witch.clips.Where(x => x.name.Contains("Charged"))
 		];
-		animLib.isValid = false;
-		animLib.ValidateLookup();
-		return animLib;
+		CustomAnimations.library.isValid = false;
+		CustomAnimations.library.ValidateLookup();
+		addedHeroAnims = true;
 	}
 
 }

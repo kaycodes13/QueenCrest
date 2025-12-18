@@ -1,0 +1,26 @@
+﻿[
+	{
+		"Name": "SlashEffect",
+		"Fps": 20,
+		"WrapMode": "Once",
+		"Frames": [
+			"SlashEffect.slash_0.png",
+			"SlashEffect.slash_1.png",
+			"SlashEffect.slash_2.png",
+			"empty.png"
+		],
+		"Triggers": [ 0, 3 ]
+	},
+	{
+		"Name": "SlashEffectAlt",
+		"Fps": 20,
+		"WrapMode": "Once",
+		"Frames": [
+			"SlashEffectAlt.slashalt_0.png",
+			"SlashEffectAlt.slashalt_1.png",
+			"SlashEffectAlt.slashalt_2.png",
+			"empty.png"
+		],
+		"Triggers": [ 0, 3 ]
+	}
+]

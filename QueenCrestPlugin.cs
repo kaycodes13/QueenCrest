@@ -3,10 +3,16 @@ using BepInEx.Logging;
 using HarmonyLib;
 using Needleforge;
 using Needleforge.Data;
+using Needleforge.Attacks;
 using QueenCrest.Patches;
 using TeamCherry.Localization;
 using UnityEngine;
 using static QueenCrest.Utils.ResourceUtils;
+using Silksong.UnityHelper.Util;
+using System.Reflection;
+using System.Linq;
+using System.Collections.Generic;
+using QueenCrest.Data;
 
 namespace QueenCrest;
 
@@ -75,6 +81,44 @@ public partial class QueenCrestPlugin : BaseUnityPlugin {
 		YenCrest.BindEvent = Bind.EnableMultibinder;
 		YenCrest.BindCompleteEvent = Bind.EnableReaperBindEffect;
 		Harmony.PatchAll(typeof(Bind));
+
+
+		YenCrest.Moveset.Slash = new Attack {
+			Name = "Slash",
+			AnimLibrary = CustomAnimations.library,
+			AnimName = "SlashEffect",
+			Hitbox = [
+				new(-1.41f, 1.14f),
+				new(-2.56f, 0.65f),
+				new(-3.35f, -0.13f),
+				new(-3.34f, -0.83f),
+				new(-2.55f, -1.32f),
+				new(-1.15f, -1.42f),
+				new(0.56f, -1.2f),
+				//new(0.25f, -0.62f),
+				//new(0.12f, 0.73f),
+				new(0.21f, 1.35f),
+			],
+			Scale = new(0.9f, 1),
+		};
+
+		YenCrest.Moveset.AltSlash = new Attack {
+			Name = "AltSlash",
+			AnimLibrary = CustomAnimations.library,
+			AnimName = "SlashEffectAlt",
+			Hitbox = [
+				new(-3.2f, 0.2f),
+				new(-3.41f, -0.22f),
+				new(-3.37f, -0.65f),
+				new(-2.5f, -1.2f),
+				new(-1.2f, -1.35f),
+				new(0.36f, -1.25f),
+				new(0.4f, 1f),
+				new(-0.71f, 0.9f),
+				new(-2.05f, 0.68f),
+			],
+			Scale = new(0.9f, 1),
+		};
 
 		YenCrest.Moveset.OnInitialized += Moveset.Setup;
 
