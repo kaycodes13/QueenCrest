@@ -2,17 +2,14 @@ using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
 using Needleforge;
-using Needleforge.Data;
 using Needleforge.Attacks;
+using Needleforge.Data;
+using QueenCrest.Data;
 using QueenCrest.Patches;
-using TeamCherry.Localization;
-using UnityEngine;
-using static QueenCrest.Utils.ResourceUtils;
 using Silksong.UnityHelper.Util;
 using System.Reflection;
-using System.Linq;
-using System.Collections.Generic;
-using QueenCrest.Data;
+using TeamCherry.Localization;
+using UnityEngine;
 
 namespace QueenCrest;
 
@@ -49,11 +46,13 @@ public partial class QueenCrestPlugin : BaseUnityPlugin {
 
 		#region Crest Init + Sprites
 
+		Assembly asm = Assembly.GetExecutingAssembly();
+		const string spritePath = $"{nameof(QueenCrest)}.Assets.Sprites";
 		Vector2 pivot = new(0.5f, 0.44f);
 		Sprite
-			linework = LoadEmbeddedPngAsSprite("Crest.png", pivot),
-			silhouette = LoadEmbeddedPngAsSprite("CrestSilhouette.png", pivot),
-			glow = LoadEmbeddedPngAsSprite("CrestGlow.png", pivot, 140f);
+			linework = SpriteUtil.LoadEmbeddedSprite(asm, $"{spritePath}.Crest.png", pixelsPerUnit: 100f, pivot: pivot),
+			silhouette = SpriteUtil.LoadEmbeddedSprite(asm, $"{spritePath}.CrestSilhouette.png", pixelsPerUnit: 100f, pivot: pivot),
+			glow = SpriteUtil.LoadEmbeddedSprite(asm, $"{spritePath}.CrestGlow.png", pixelsPerUnit: 140f, pivot: pivot);
 
 		float slotOffset = (0.5f - pivot.y) * (linework.rect.height / linework.pixelsPerUnit);
 
@@ -81,7 +80,6 @@ public partial class QueenCrestPlugin : BaseUnityPlugin {
 		YenCrest.BindEvent = Bind.EnableMultibinder;
 		YenCrest.BindCompleteEvent = Bind.EnableReaperBindEffect;
 		Harmony.PatchAll(typeof(Bind));
-
 
 		YenCrest.Moveset.Slash = new Attack {
 			Name = "Slash",
