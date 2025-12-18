@@ -12,7 +12,7 @@ The moveset itself is fully functional. Custom animations may be added in the fu
 
 Install via r2modman or Thunderstore Mod Manager. QueenCrest's dependencies should be installed automatically.
 
-For manual installation, extract the `.zip` file and place the resulting **folder** in the `BepInEx/plugins` directory for your Silksong install. You'll also have to manually install [I18N](<https://thunderstore.io/c/hollow-knight-silksong/p/silksong_modding/I18N/>), as well as [Needleforge](<https://thunderstore.io/c/hollow-knight-silksong/p/Voidlings/Needleforge/>) and it's dependencies.
+For manual installation, extract the `.zip` file and place the resulting **folder** in the `BepInEx/plugins` directory for your Silksong install. You'll also have to manually install [I18N](<https://thunderstore.io/c/hollow-knight-silksong/p/silksong_modding/I18N/>) and [UnityHelper](<https://thunderstore.io/c/hollow-knight-silksong/p/silksong_modding/UnityHelper/>), as well as [Needleforge](<https://thunderstore.io/c/hollow-knight-silksong/p/Voidlings/Needleforge/>) and it's dependencies.
 
 ## Usage
 
