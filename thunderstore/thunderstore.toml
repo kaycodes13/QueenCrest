@@ -16,7 +16,7 @@ containsNsfwContent = false
 [package.dependencies]
 BepInEx-BepInExPack_Silksong = "5.4.2304"
 silksong_modding-I18N = "1.0.2"
-Voidlings-Needleforge = "0.8.0"
+Voidlings-Needleforge = "0.8.1"
 
 
 # in most cases you should not change this build block, or the first build.copy block; the dist and tmp directories are used
